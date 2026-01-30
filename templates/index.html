@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Energy Intelligence Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="page">
+
+  <!-- STICKY HEADER -->
+  <div class="header">
+    ⚡ Energy Intelligence Dashboard
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <form method="post" class="form">
+
+      <input type="number" name="hour" placeholder="Hour (0–23)"
+             value="{{ form_data.hour if form_data else '' }}" required>
+
+      <input type="number" step="0.1" name="temperature" placeholder="Temperature °C"
+             value="{{ form_data.temperature if form_data else '' }}" required>
+
+      <input type="number" step="0.1" name="humidity" placeholder="Humidity %"
+             value="{{ form_data.humidity if form_data else '' }}" required>
+
+      <input type="number" step="0.1" name="load" placeholder="Appliance Load (kW)"
+             value="{{ form_data.load if form_data else '' }}" required>
+
+      <input type="number" name="occupancy" placeholder="Occupancy (People)"
+             value="{{ form_data.occupancy if form_data else '' }}" required>
+
+      <button type="submit">Predict</button>
+    </form>
+
+    {% if result %}
+    <div class="card">
+
+      <p><b>Predicted Energy:</b> {{ result.energy }} kWh</p>
+      <p><b>Estimated Cost:</b> ₹{{ result.cost }}</p>
+      <p><b>Recommendation:</b> {{ result.tip }}</p>
+
+      <hr>
+
+      <p><b>R² Score:</b> {{ result.metrics.r2 }}</p>
+      <p><b>Mape:</b> {{ result.metrics.mape }}</p>
+
+      <p><b>Feature Importance:</b></p>
+      <ul>
+        {% for k,v in result.metrics.feature_importance.items() %}
+          <li>{{ k.replace('_',' ').title() }} → {{ v }}</li>
+        {% endfor %}
+      </ul>
+
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+</body>
+</html>

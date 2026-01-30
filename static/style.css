@@ -1,0 +1,70 @@
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #0f2027, #000);
+  font-family: 'Segoe UI';
+  color: white;
+}
+
+/* PAGE WRAPPER */
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* STICKY DASHBOARD HEADER */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 4px 20px rgba(0,255,255,0.3);
+}
+
+/* SCROLLABLE CONTENT */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+}
+
+/* FORM */
+.form {
+  width: 520px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 0 40px rgba(0,255,255,0.35);
+}
+
+input, button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+}
+
+button {
+  background: linear-gradient(90deg, #00faff, #00c3ff);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* RESULT CARD */
+.card {
+  width: 520px;
+  margin-top: 25px;
+  padding: 20px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 15px;
+}
