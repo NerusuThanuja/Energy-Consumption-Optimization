@@ -1,41 +1,38 @@
 from flask import Flask, render_template, request
 from src.predict import predict_energy
-from src.optimization import optimize
 
 app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = None
-    form_data = {}
 
     if request.method == "POST":
-        form_data = {
-            "hour": request.form["hour"],
-            "temperature": request.form["temperature"],
-            "humidity": request.form["humidity"],
-            "load": request.form["load"],
-            "occupancy": request.form["occupancy"],
-        }
+        hour = int(request.form["hour"])
+        temperature = float(request.form["temperature"])
+        humidity = float(request.form["humidity"])
+        appliance_load = float(request.form["appliance_load"])
+        occupancy = int(request.form["occupancy"])
 
-        energy, metrics = predict_energy(
-            int(form_data["hour"]),
-            float(form_data["temperature"]),
-            float(form_data["humidity"]),
-            float(form_data["load"]),
-            int(form_data["occupancy"])
+        energy = predict_energy(
+            hour, temperature, humidity, appliance_load, occupancy
         )
 
-        cost, tip = optimize(energy, float(form_data["temperature"]))
+        cost = round(energy * 8.5, 2)
+
+        recommendation = (
+            "Shift heavy loads to afternoon to save ~15%"
+            if hour >= 18 else
+            "Energy usage is optimal"
+        )
 
         result = {
             "energy": energy,
             "cost": cost,
-            "tip": tip,
-            "metrics": metrics
+            "recommendation": recommendation
         }
 
-    return render_template("index.html", result=result, form_data=form_data)
+    return render_template("index.html", result=result)
 
 if __name__ == "__main__":
     app.run(debug=True)

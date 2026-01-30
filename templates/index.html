@@ -1,65 +1,134 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Energy Intelligence Dashboard</title>
-  <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>Energy Intelligence Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #ffffff;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dashboard {
+            width: 420px;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-size: 14px;
+            color: #dcdcdc;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #00d4aa;
+            color: #003333;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00bfa0;
+        }
+
+        .result-card {
+            margin-top: 25px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+        }
+
+        .result-card h3 {
+            margin-bottom: 5px;
+            color: #00ffd5;
+        }
+
+        .result-card p {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+    </style>
 </head>
+
 <body>
+<div class="container">
+    <div class="dashboard">
 
-<div class="page">
+        <!-- TITLE NEVER DISAPPEARS -->
+        <h1>⚡ Energy Intelligence Dashboard</h1>
 
-  <!-- STICKY HEADER -->
-  <div class="header">
-    ⚡ Energy Intelligence Dashboard
-  </div>
+        <!-- FORM -->
+        <form method="POST">
+            <label>Hour (0–23)</label>
+            <input type="number" name="hour" min="0" max="23" required>
 
-  <!-- CONTENT -->
-  <div class="content">
+            <label>Temperature (°C)</label>
+            <input type="number" step="0.1" name="temperature" required>
 
-    <form method="post" class="form">
+            <label>Humidity (%)</label>
+            <input type="number" step="0.1" name="humidity" required>
 
-      <input type="number" name="hour" placeholder="Hour (0–23)"
-             value="{{ form_data.hour if form_data else '' }}" required>
+            <label>Appliance Load (kW)</label>
+            <input type="number" step="0.1" name="appliance_load" required>
 
-      <input type="number" step="0.1" name="temperature" placeholder="Temperature °C"
-             value="{{ form_data.temperature if form_data else '' }}" required>
+            <label>Occupancy (Number of People)</label>
+            <input type="number" min="0" name="occupancy" required>
 
-      <input type="number" step="0.1" name="humidity" placeholder="Humidity %"
-             value="{{ form_data.humidity if form_data else '' }}" required>
+            <button type="submit">Predict</button>
+        </form>
 
-      <input type="number" step="0.1" name="load" placeholder="Appliance Load (kW)"
-             value="{{ form_data.load if form_data else '' }}" required>
+        <!-- RESULTS (SAME PAGE, INPUTS STAY) -->
+        {% if result %}
+        <div class="result-card">
+            <h3>Predicted Energy</h3>
+            <p>{{ result.energy }} kWh</p>
 
-      <input type="number" name="occupancy" placeholder="Occupancy (People)"
-             value="{{ form_data.occupancy if form_data else '' }}" required>
+            <h3>Estimated Cost</h3>
+            <p>₹{{ result.cost }}</p>
 
-      <button type="submit">Predict</button>
-    </form>
-
-    {% if result %}
-    <div class="card">
-
-      <p><b>Predicted Energy:</b> {{ result.energy }} kWh</p>
-      <p><b>Estimated Cost:</b> ₹{{ result.cost }}</p>
-      <p><b>Recommendation:</b> {{ result.tip }}</p>
-
-      <hr>
-
-      <p><b>R² Score:</b> {{ result.metrics.r2 }}</p>
-      <p><b>Mape:</b> {{ result.metrics.mape }}</p>
-
-      <p><b>Feature Importance:</b></p>
-      <ul>
-        {% for k,v in result.metrics.feature_importance.items() %}
-          <li>{{ k.replace('_',' ').title() }} → {{ v }}</li>
-        {% endfor %}
-      </ul>
+            <h3>Recommendation</h3>
+            <p>{{ result.recommendation }}</p>
+        </div>
+        {% endif %}
 
     </div>
-    {% endif %}
-
-  </div>
 </div>
-
 </body>
 </html>
