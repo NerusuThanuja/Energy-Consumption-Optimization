@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request
-from src.predict import predict_energy
 
 app = Flask(__name__)
 
@@ -14,21 +13,30 @@ def index():
         appliance_load = float(request.form["appliance_load"])
         occupancy = int(request.form["occupancy"])
 
-        energy = predict_energy(
-            hour, temperature, humidity, appliance_load, occupancy
+        # ---- Simple deterministic logic (no ML model) ----
+        energy = round(
+            (appliance_load * 1.8) +
+            (occupancy * 0.6) +
+            (temperature * 0.12) +
+            (humidity * 0.05),
+            2
         )
 
-        cost = round(energy * 8.5, 2)
+        cost = round(energy * 8.5, 2)  # ₹ per kWh
+        carbon_emission = round(energy * 0.82, 2)  # kg CO2 (approx)
 
-        recommendation = (
-            "Shift heavy loads to afternoon to save ~15%"
-            if hour >= 18 else
-            "Energy usage is optimal"
-        )
+        if hour >= 18:
+            recommendation = "Shift heavy loads to afternoon to save ~15%"
+            efficiency = "Moderate"
+        else:
+            recommendation = "Energy usage is optimal"
+            efficiency = "High"
 
         result = {
             "energy": energy,
             "cost": cost,
+            "carbon": carbon_emission,
+            "efficiency": efficiency,
             "recommendation": recommendation
         }
 
